@@ -1,0 +1,145 @@
+{
+  "name": "clima 04",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            },
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ec408f0b-e9e8-4d79-923b-0018142dd80a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=-12.9714&longitude=-38.5014&current=temperature_2m",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2aac2d6a-0fc4-4340-b804-be5841952fa3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c756e08-34f3-4bc1-b153-832310a81ebd",
+              "leftValue": "={{$json.current.temperature_2m}}",
+              "rightValue": 20,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "de49b056-feca-4376-99a2-635346942e95",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1020900625",
+        "text": "=🌡️ ALERTA CLIMÁTICO\n\n📍 Cidade: Salvador - BA\n\n🌡️ Temperatura Atual: {{$json.current.temperature_2m}}°C\n\n⚠️ A temperatura ultrapassou o limite configurado no sistema.\n\n🕒 Horário da consulta: {{$now}}\n\n🤖 Mensagem gerada automaticamente pelo fluxo n8n.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        -160
+      ],
+      "id": "3a04f3f1-77f3-437f-8ffe-016a237102d5",
+      "name": "Send a text message",
+      "webhookId": "18441e68-2dc1-4e0e-8ce5-377cd81a8891",
+      "retryOnFail": false,
+      "maxTries": 2,
+      "credentials": {
+        "telegramApi": {
+          "id": "M4NkKcDFNF7Zghgt",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "70afeb48-938e-4774-9edd-096d89434855",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "75c2e7e46fe228b02b4e95b76f5694bd5920046ee8eacea4b7d2991600159ebb"
+  },
+  "id": "117E17jP379tJSGm",
+  "tags": []
+}
