@@ -1,0 +1,279 @@
+{
+  "name": "planilhas sheets (2)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "19ed63db-980e-4ba3-8a97-8fca2dde6428",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "9c403fc1-dd42-456d-92ad-3e33e538cb7e",
+      "name": "Recebe Palavra",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -512,
+        128
+      ],
+      "webhookId": "19ed63db-980e-4ba3-8a97-8fca2dde6428"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $json.query.palavra }}",
+              "rightValue": "urgente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8ee7b8ee-446f-4eb6-a249-40122965ec6a",
+      "name": "É urgente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"mensagem\": \"Registrado: urgente\", \"hora\": \"{{ $json.registro }}\" }",
+        "options": {}
+      },
+      "id": "8266234a-ff3d-4fcf-8eea-39fa467af90c",
+      "name": "Responde urgente",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        384,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"mensagem\": \"Registrado: normal\", \"hora\": \"{{ $json.registro }}\" }",
+        "options": {}
+      },
+      "id": "e45f63e6-7d29-4453-8416-3113035900e9",
+      "name": "Responde normal",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        384,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo",
+          "mode": "list",
+          "cachedResultName": "monitor de palavras",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DATAHORA": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "TIPO": "urgente"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "DATAHORA",
+              "displayName": "DATAHORA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIPO",
+              "displayName": "TIPO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a4d2e69f-751d-4dcd-ad3f-beff43d080ae",
+      "name": "urgente",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MxVpAz6EgSSsP9U4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo",
+          "mode": "list",
+          "cachedResultName": "monitor de palavras",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1GsQ2oNKEOWuyp7VXjnG8VWQlP7JtdExNicjeBSbDoJo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "DATAHORA": "={{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}",
+            "TIPO": "normal"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "DATAHORA",
+              "displayName": "DATAHORA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "TIPO",
+              "displayName": "TIPO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        224
+      ],
+      "id": "53cf5669-37f9-4997-a544-50830fec3eda",
+      "name": "normal",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MxVpAz6EgSSsP9U4",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recebe Palavra": {
+      "main": [
+        [
+          {
+            "node": "É urgente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É urgente?": {
+      "main": [
+        [
+          {
+            "node": "urgente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "urgente": {
+      "main": [
+        [
+          {
+            "node": "Responde urgente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normal": {
+      "main": [
+        [
+          {
+            "node": "Responde normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4a7ac14b-1682-439d-8533-e1ddcb87c466",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "26f8ab30fd865471de55a6e7ef4a715fde4d5dd2e507c7a2df1912dd11f501f8"
+  },
+  "nodeGroups": [],
+  "id": "exG9C2JAMoRnElD4",
+  "tags": []
+}
