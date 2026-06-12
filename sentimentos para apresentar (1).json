@@ -1,0 +1,207 @@
+{
+  "name": "sentimentos para apresentar",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -32
+      ],
+      "id": "15bec4a3-0b7d-4dee-85e3-f3c402c0fba6",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-texto",
+              "name": "texto",
+              "value": "o atendimento foi excelente e muito rápido",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        -32
+      ],
+      "id": "b6a9ff5f-b3ef-4a3b-903f-569d951f7881",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst texto =\n(\n  $json.query?.texto ||\n  $json.texto ||\n  \"\"\n).toLowerCase();\n\nconst positivas = [\n  \"bom\",\n  \"ótimo\",\n  \"excelente\",\n  \"gostei\",\n  \"maravilhoso\",\n  \"rápido\",\n  \"perfeito\",\n  \"adorei\",\n  \"incrível\",\n  \"fantástico\"\n];\n\nconst negativas = [\n  \"ruim\",\n  \"péssimo\",\n  \"horrível\",\n  \"demorado\",\n  \"problema\",\n  \"reclamação\",\n  \"odiei\",\n  \"terrível\",\n  \"lento\",\n  \"horroroso\"\n];\n\nlet score = 0;\n\nfor (const palavra of positivas) {\n  if (texto.includes(palavra)) {\n    score++;\n  }\n}\n\nfor (const palavra of negativas) {\n  if (texto.includes(palavra)) {\n    score--;\n  }\n}\n\nlet sentimento;\n\nif (score > 0) {\n  sentimento = \"Positivo\";\n} else if (score < 0) {\n  sentimento = \"Negativo\";\n} else {\n  sentimento = \"Neutro\";\n}\n\nreturn [\n  {\n    json: {\n      texto,\n      score,\n      sentimento\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -32
+      ],
+      "id": "c3bde179-d4eb-4246-a46e-11c55cad445f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "607485b0-0dee-434c-a148-4b69863dd2b5",
+              "leftValue": "={{ $json.sentimento }}",
+              "rightValue": "Positivo",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        912,
+        -32
+      ],
+      "id": "2c848218-139c-4939-8a1d-0f2279aa6acc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8930011608:AAG5c4SYSgUHduRtdSPJwB8NdikhWQoI0Rc/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "1020900625"
+            },
+            {
+              "name": "text",
+              "value": "={{ '😊 FEEDBACK POSITIVO\\n\\nTexto recebido: ' + $json.texto + '\\nScore: ' + $json.score + '\\nClassificação: ' + $json.sentimento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1136,
+        -144
+      ],
+      "id": "fc578241-200e-493f-a164-a762f03e8383",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8930011608:AAG5c4SYSgUHduRtdSPJwB8NdikhWQoI0Rc/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "1020900625"
+            },
+            {
+              "name": "text",
+              "value": "={{ '😔 FEEDBACK NEGATIVO/NEUTRO\\n\\nTexto recebido: ' + $json.texto + '\\nScore: ' + $json.score + '\\nClassificação: ' + $json.sentimento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1136,
+        80
+      ],
+      "id": "78fedd04-865f-4027-be25-10b6a05b3302",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "41a6e965-37fb-40ad-8d10-4afb9c6a5434",
+  "meta": {
+    "instanceId": "75c2e7e46fe228b02b4e95b76f5694bd5920046ee8eacea4b7d2991600159ebb"
+  },
+  "id": "9NDFGAKC1cjyK9Vq",
+  "tags": []
+}
