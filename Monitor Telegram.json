@@ -1,0 +1,205 @@
+{
+  "name": "Monitor Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "monitor-telegram",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "88b99fcf-d593-4105-9052-e3ae1c07c202",
+      "name": "Recebe Palavra",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -32
+      ],
+      "webhookId": "c61dd61f-4327-4845-a793-e75b6bd596f4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $json.query.palavra }}",
+              "rightValue": "urgente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "105211af-7033-49fc-9928-3f3e850a77bf",
+      "name": "É urgente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8842717454:AAHxGzbxZ75L5OHwSkljKdlzOjrrF_AIFkY/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "7539030959"
+            },
+            {
+              "name": "text",
+              "value": "=⚠️ URGENTE recebido em {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1782fae8-4816-49d8-9da2-938d1704399a",
+      "name": "Telegram urgente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        224,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8842717454:AAHxGzbxZ75L5OHwSkljKdlzOjrrF_AIFkY/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "7539030959"
+            },
+            {
+              "name": "text",
+              "value": "=✅ NORMAL recebido em {{ $now.toFormat('yyyy-MM-dd HH:mm:ss') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d678a120-a354-4d03-89ed-df73b86a0125",
+      "name": "Telegram normal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        224,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"mensagem\": \"Registrado e enviado ao Telegram: urgente\" }",
+        "options": {}
+      },
+      "id": "6379f199-2a8a-4ff8-8461-b561180445ee",
+      "name": "Responde urgente",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"mensagem\": \"Registrado e enviado ao Telegram: normal\" }",
+        "options": {}
+      },
+      "id": "f38a0d96-7f1f-4d30-bf9f-b57e9c5e772a",
+      "name": "Responde normal",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        480,
+        96
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recebe Palavra": {
+      "main": [
+        [
+          {
+            "node": "É urgente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É urgente?": {
+      "main": [
+        [
+          {
+            "node": "Telegram urgente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram urgente": {
+      "main": [
+        [
+          {
+            "node": "Responde urgente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram normal": {
+      "main": [
+        [
+          {
+            "node": "Responde normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c3c1bd4f-40ff-4c8f-8900-fbfd05662e85",
+  "meta": {
+    "instanceId": "75c2e7e46fe228b02b4e95b76f5694bd5920046ee8eacea4b7d2991600159ebb"
+  },
+  "id": "ePd0zlG8RwWS7OIF",
+  "tags": []
+}

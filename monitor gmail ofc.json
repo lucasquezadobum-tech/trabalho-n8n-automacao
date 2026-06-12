@@ -1,0 +1,199 @@
+{
+  "name": "monitor gmail ofc",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "974d7b0c-034c-4168-a9cf-eb9220621f4c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "67c173c5-9bcb-4bf3-ab96-af73b8d5147a",
+      "name": "Recebe Palavra",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -32
+      ],
+      "webhookId": "974d7b0c-034c-4168-a9cf-eb9220621f4c"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-1",
+              "leftValue": "={{ $json.query.palavra }}",
+              "rightValue": "urgente",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a11d950b-ce1b-4b8d-927e-e56e83942041",
+      "name": "É urgente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"mensagem\": \"Registrado e enviado ao Gmail: urgente\" }",
+        "options": {}
+      },
+      "id": "a4cd11c7-37e0-4754-9aab-31efb66e04f2",
+      "name": "Responde urgente",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -160
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"mensagem\": \"Registrado e enviado ao Gmail: normal\" }",
+        "options": {}
+      },
+      "id": "3b909886-c49a-4fad-86fd-889d8f24cdab",
+      "name": "Responde normal",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        496,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "grupon8na3@gmail.com",
+        "toEmail": "=grupon8na3@gmail.com",
+        "subject": "=ALERTA URGENTE: {{ $json.query.palavra }}",
+        "html": "=⚠️ ALERTA: A palavra \"{{ $json.query.palavra }}\" foi recebida no sistema em {{ $now.toFormat('dd/MM/yyyy HH:mm:ss') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        -160
+      ],
+      "id": "b65e43c6-d64c-4573-b7c0-5e81673fd7d8",
+      "name": "é urgente?",
+      "webhookId": "1e9e0880-cf78-43a8-bbf5-4f46e7235795",
+      "credentials": {
+        "smtp": {
+          "id": "gt6dg3XzevdmmB2o",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "grupon8na3@gmail.com",
+        "toEmail": "grupon8na3@gmail.com",
+        "subject": "=Registro Normal: {{ $json.query.palavra }}",
+        "html": "=Registro: A palavra \"{{ $json.query.palavra }}\" foi recebida no sistema em {{ $now.toFormat('dd/MM/yyyy HH:mm:ss') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        80
+      ],
+      "id": "cb4ee95f-1431-41ff-bf0a-803a2315a3fb",
+      "name": "normal",
+      "webhookId": "b0ae88c8-d79f-4be1-89a9-7fc52b4de94d",
+      "credentials": {
+        "smtp": {
+          "id": "gt6dg3XzevdmmB2o",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recebe Palavra": {
+      "main": [
+        [
+          {
+            "node": "É urgente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É urgente?": {
+      "main": [
+        [
+          {
+            "node": "é urgente?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normal": {
+      "main": [
+        [
+          {
+            "node": "Responde normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "é urgente?": {
+      "main": [
+        [
+          {
+            "node": "Responde urgente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "20e66d86-ad15-49b4-8905-477d18129cc5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "75c2e7e46fe228b02b4e95b76f5694bd5920046ee8eacea4b7d2991600159ebb"
+  },
+  "id": "GqRtkSBUfU13DRY2",
+  "tags": []
+}
